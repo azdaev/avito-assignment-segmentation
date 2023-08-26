@@ -1,0 +1,44 @@
+version: '3.8'
+services:
+  gosegmentation:
+    container_name: gosegmentation
+    build:
+      context: .
+    env_file:
+      - .env
+    networks:
+      - shared
+    ports:
+      - '1350:5000'
+    depends_on:
+      - pgl_db
+    volumes:
+      - /var/www/services/segmentation/logs:/segmentation/logs
+  pgl_db:
+    container_name: pgl_db
+    image: postgres:latest
+    env_file:
+      - .env
+    ports:
+      - '1001:5432'
+    environment:
+      - POSTGRES_USER=$POSTGRES_USER
+      - POSTGRES_DB=$POSTGRES_USER
+      - POSTGRES_PASSWORD=$POSTGRES_PASSWORD
+    healthcheck:
+      test: pg_isready -U admin -d $POSTGRES_PASSWORD
+      interval: 10s
+      timeout: 3s
+      retries: 3
+    networks:
+      - shared
+    volumes:
+      - /var/www/services/segmentation/storages/postgres:/var/lib/postgresql/data/
+
+networks:
+  shared:
+    driver: bridge
+
+volumes:
+  pgl_db:
+    driver: local
