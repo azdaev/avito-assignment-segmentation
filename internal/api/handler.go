@@ -2,14 +2,15 @@ package api
 
 import (
 	"context"
+	"segmentation-avito/internal/models"
 
 	"github.com/gin-gonic/gin"
 )
 
 type SegmentationService interface {
-	CreateSegment(ctx context.Context, segmentName string) error
+	CreateSegment(ctx context.Context, segmentName string, percentage int) ([]int, error)
 	DeleteSegment(ctx context.Context, segmentName string) error
-	SetUserSegments(ctx context.Context, addSegments, removeSegments []string, userID int) error
+	SetUserSegments(ctx context.Context, addSegments, removeSegments []string, userID int) (*models.SetUserSegmentsResponse, error)
 	GetUserSegments(ctx context.Context, userID int) ([]string, error)
 }
 
@@ -30,10 +31,10 @@ func New(segmentationService SegmentationService, logger Logger) *gin.Engine {
 
 	r := gin.New()
 
-	api := r.Group("/api/")
+	api := r.Group("/api")
 
 	api.POST("/create", h.CreateSegment)
-	api.DELETE("/delete/", h.DeleteSegment)
+	api.DELETE("/delete", h.DeleteSegment)
 	api.POST("/set", h.SetUserSegments)
 	api.GET("/user/:id", h.GetUserSegments)
 

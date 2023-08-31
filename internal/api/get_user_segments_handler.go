@@ -9,7 +9,7 @@ import (
 )
 
 func (h *Handler) GetUserSegments(c *gin.Context) {
-	userIDstr := c.Param("id")[1:]
+	userIDstr := c.Param("id")
 	userID, err := strconv.Atoi(userIDstr)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{

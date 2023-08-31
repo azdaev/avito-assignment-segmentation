@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"flag"
 	"log"
 	"log/slog"
 	"os"
@@ -13,19 +12,7 @@ import (
 	"segmentation-avito/internal/repository/postgres"
 )
 
-var (
-	folder, file, env string
-)
-
-func init() {
-	flag.StringVar(&folder, "folder", "configs", "")
-	flag.StringVar(&file, "file", "main", "")
-	flag.StringVar(&env, "env", ".env", "")
-}
-
 func main() {
-	flag.Parse()
-
 	cfg := config.MustLoad()
 
 	ctx := context.Background()
@@ -44,5 +31,5 @@ func main() {
 		logger,
 	)
 
-	log.Fatal(r.Run(cfg.Port))
+	log.Fatal(r.Run(cfg.ServerPort))
 }

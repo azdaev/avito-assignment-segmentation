@@ -2,13 +2,13 @@ package api
 
 import (
 	"context"
-	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
 
 type CreateSegmentRequest struct {
-	Name string `json:"name"`
+	Name       string `json:"name"`
+	Percentage int    `json:"percentage"`
 }
 
 func (h *Handler) CreateSegment(c *gin.Context) {
@@ -21,10 +21,16 @@ func (h *Handler) CreateSegment(c *gin.Context) {
 
 	ctx := context.Background()
 
-	if err := h.segmentationService.CreateSegment(ctx, req.Name); err != nil {
+	affectedUsers, err := h.segmentationService.CreateSegment(ctx, req.Name, req.Percentage)
+	if err != nil {
 		c.JSON(400, gin.H{"error": err.Error()})
 		return
 	}
 
-	c.Status(http.StatusOK)
+	if len(affectedUsers) > 0 {
+		c.JSON(200, gin.H{"affected_users": affectedUsers})
+		return
+	}
+
+	c.Status(200)
 }

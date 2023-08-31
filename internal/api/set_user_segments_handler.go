@@ -2,6 +2,7 @@ package api
 
 import (
 	"context"
+	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -23,8 +24,10 @@ func (h *Handler) SetUserSegments(c *gin.Context) {
 
 	ctx := context.Background()
 
-	if err := h.segmentationService.SetUserSegments(ctx, req.AddSegments, req.RemoveSegments, req.UserID); err != nil {
-		c.JSON(400, gin.H{"error": err.Error()})
+	resp, err := h.segmentationService.SetUserSegments(ctx, req.AddSegments, req.RemoveSegments, req.UserID)
+	log.Println("resp:", resp)
+	if err != nil {
+		c.JSON(200, resp)
 		return
 	}
 
